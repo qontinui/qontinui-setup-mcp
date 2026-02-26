@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "qontinui-setup-mcp"
+version = "0.1.0"
+description = "MCP server for guided qontinui-runner setup and configuration"
+authors = ["Joshua Spinak"]
+license = "MIT"
+packages = [{include = "qontinui_setup_mcp", from = "src"}]
+
+[tool.poetry.scripts]
+qontinui-setup-mcp = "qontinui_setup_mcp.server:run"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+mcp = "^1.0.0"
+httpx = "^0.28.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+
+[tool.isort]
+profile = "black"
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
