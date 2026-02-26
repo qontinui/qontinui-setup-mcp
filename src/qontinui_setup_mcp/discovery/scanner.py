@@ -77,13 +77,12 @@ def _scan_sync(root: str, max_depth: int) -> list[ProjectInfo]:
         current = Path(dirpath)
         depth = len(current.parts) - root_depth
 
-        # Prune directories beyond max_depth.
-        if depth >= max_depth:
-            dirnames.clear()
-            continue
-
         # Prune skipped directories (in-place so os.walk respects it).
         dirnames[:] = sorted(d for d in dirnames if d not in SKIP_DIRS)
+
+        # Stop descending beyond max_depth (but still check this directory).
+        if depth >= max_depth:
+            dirnames.clear()
 
         # Check for manifest files in this directory.
         filenames_set = set(filenames)

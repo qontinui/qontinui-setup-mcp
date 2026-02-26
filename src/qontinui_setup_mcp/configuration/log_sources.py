@@ -191,7 +191,7 @@ async def apply_suggested_sources(
         logger.exception("Failed to discover log sources for %s", project_path)
         return {"success": False, "error": f"Discovery failed: {exc}"}
 
-    suggested: list[dict[str, Any]] = result.get("sources", [])
+    suggested: list[dict[str, Any]] = result.get("suggested_sources", [])
     framework: dict[str, Any] = result.get("framework", {})
 
     if dry_run:
