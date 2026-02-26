@@ -91,9 +91,7 @@ class RunnerClient:
         """Make an HTTP request to the runner API."""
         client = await self._get_client()
         try:
-            response = await client.request(
-                method, path, json=json, timeout=timeout
-            )
+            response = await client.request(method, path, json=json, timeout=timeout)
             response.raise_for_status()
             body = response.json()
             return RunnerResponse(

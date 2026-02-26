@@ -124,8 +124,15 @@ FRAMEWORK_REGISTRY: list[FrameworkDefinition] = [
         error_patterns=_JS_ERROR_PATTERNS,
         warning_patterns=_JS_WARNING_PATTERNS,
         keywords=[
-            "next", "nextjs", "react", "ssr", "server-side rendering",
-            "app router", "pages router", "middleware", "api route",
+            "next",
+            "nextjs",
+            "react",
+            "ssr",
+            "server-side rendering",
+            "app router",
+            "pages router",
+            "middleware",
+            "api route",
         ],
         logs_to_file_by_default=False,
         build_tool="webpack/turbopack",
@@ -144,8 +151,13 @@ FRAMEWORK_REGISTRY: list[FrameworkDefinition] = [
         error_patterns=_JS_ERROR_PATTERNS,
         warning_patterns=_JS_WARNING_PATTERNS,
         keywords=[
-            "vite", "react", "hmr", "hot module replacement",
-            "bundle", "rollup", "esbuild",
+            "vite",
+            "react",
+            "hmr",
+            "hot module replacement",
+            "bundle",
+            "rollup",
+            "esbuild",
         ],
         logs_to_file_by_default=False,
         build_tool="vite",
@@ -164,8 +176,14 @@ FRAMEWORK_REGISTRY: list[FrameworkDefinition] = [
         error_patterns=_JS_ERROR_PATTERNS,
         warning_patterns=_JS_WARNING_PATTERNS,
         keywords=[
-            "express", "middleware", "router", "http", "request",
-            "response", "rest", "api",
+            "express",
+            "middleware",
+            "router",
+            "http",
+            "request",
+            "response",
+            "rest",
+            "api",
         ],
         logs_to_file_by_default=False,
     ),
@@ -183,8 +201,15 @@ FRAMEWORK_REGISTRY: list[FrameworkDefinition] = [
         error_patterns=_JS_ERROR_PATTERNS,
         warning_patterns=_JS_WARNING_PATTERNS,
         keywords=[
-            "nestjs", "nest", "decorator", "module", "controller",
-            "provider", "guard", "interceptor", "pipe",
+            "nestjs",
+            "nest",
+            "decorator",
+            "module",
+            "controller",
+            "provider",
+            "guard",
+            "interceptor",
+            "pipe",
         ],
         logs_to_file_by_default=False,
     ),
@@ -202,8 +227,13 @@ FRAMEWORK_REGISTRY: list[FrameworkDefinition] = [
         error_patterns=_JS_ERROR_PATTERNS,
         warning_patterns=_JS_WARNING_PATTERNS,
         keywords=[
-            "react-native", "metro", "bridge", "native module",
-            "expo", "ios", "android",
+            "react-native",
+            "metro",
+            "bridge",
+            "native module",
+            "expo",
+            "ios",
+            "android",
         ],
         logs_to_file_by_default=False,
         build_tool="metro",
@@ -223,8 +253,15 @@ FRAMEWORK_REGISTRY: list[FrameworkDefinition] = [
         error_patterns=_PY_ERROR_PATTERNS,
         warning_patterns=_PY_WARNING_PATTERNS,
         keywords=[
-            "django", "manage.py", "wsgi", "asgi", "migration",
-            "orm", "template", "middleware", "settings",
+            "django",
+            "manage.py",
+            "wsgi",
+            "asgi",
+            "migration",
+            "orm",
+            "template",
+            "middleware",
+            "settings",
         ],
         logs_to_file_by_default=False,
     ),
@@ -242,8 +279,13 @@ FRAMEWORK_REGISTRY: list[FrameworkDefinition] = [
         error_patterns=_PY_ERROR_PATTERNS,
         warning_patterns=_PY_WARNING_PATTERNS,
         keywords=[
-            "flask", "werkzeug", "jinja", "blueprint", "wsgi",
-            "route", "endpoint",
+            "flask",
+            "werkzeug",
+            "jinja",
+            "blueprint",
+            "wsgi",
+            "route",
+            "endpoint",
         ],
         logs_to_file_by_default=False,
     ),
@@ -261,8 +303,14 @@ FRAMEWORK_REGISTRY: list[FrameworkDefinition] = [
         error_patterns=_PY_ERROR_PATTERNS,
         warning_patterns=_PY_WARNING_PATTERNS,
         keywords=[
-            "fastapi", "uvicorn", "starlette", "pydantic", "openapi",
-            "async", "endpoint", "router",
+            "fastapi",
+            "uvicorn",
+            "starlette",
+            "pydantic",
+            "openapi",
+            "async",
+            "endpoint",
+            "router",
         ],
         logs_to_file_by_default=False,
     ),
@@ -281,8 +329,14 @@ FRAMEWORK_REGISTRY: list[FrameworkDefinition] = [
         error_patterns=_RUST_ERROR_PATTERNS,
         warning_patterns=_RUST_WARNING_PATTERNS,
         keywords=[
-            "tauri", "webview", "ipc", "invoke", "command",
-            "window", "desktop", "system tray",
+            "tauri",
+            "webview",
+            "ipc",
+            "invoke",
+            "command",
+            "window",
+            "desktop",
+            "system tray",
         ],
         logs_to_file_by_default=False,
         build_tool="cargo",
@@ -301,8 +355,15 @@ FRAMEWORK_REGISTRY: list[FrameworkDefinition] = [
         error_patterns=_RUST_ERROR_PATTERNS,
         warning_patterns=_RUST_WARNING_PATTERNS,
         keywords=[
-            "rust", "cargo", "crate", "trait", "impl",
-            "borrow", "lifetime", "async", "tokio",
+            "rust",
+            "cargo",
+            "crate",
+            "trait",
+            "impl",
+            "borrow",
+            "lifetime",
+            "async",
+            "tokio",
         ],
         logs_to_file_by_default=False,
         build_tool="cargo",
@@ -322,8 +383,14 @@ FRAMEWORK_REGISTRY: list[FrameworkDefinition] = [
         error_patterns=_GENERIC_ERROR_PATTERNS + [r"goroutine \d+"],
         warning_patterns=_GENERIC_WARNING_PATTERNS,
         keywords=[
-            "go", "golang", "goroutine", "channel", "interface",
-            "struct", "module", "package",
+            "go",
+            "golang",
+            "goroutine",
+            "channel",
+            "interface",
+            "struct",
+            "module",
+            "package",
         ],
         logs_to_file_by_default=False,
     ),
@@ -338,14 +405,21 @@ FRAMEWORK_REGISTRY: list[FrameworkDefinition] = [
         default_log_locations=["logs", "target/logs"],
         default_log_format="plaintext",
         default_parser="generic",
-        error_patterns=_GENERIC_ERROR_PATTERNS + [
+        error_patterns=_GENERIC_ERROR_PATTERNS
+        + [
             r"(?:java\.lang\.\w+)?Exception",
             r"at [\w.$]+\([\w.]+:\d+\)",
         ],
         warning_patterns=_GENERIC_WARNING_PATTERNS,
         keywords=[
-            "spring", "boot", "bean", "controller", "service",
-            "repository", "autowired", "configuration",
+            "spring",
+            "boot",
+            "bean",
+            "controller",
+            "service",
+            "repository",
+            "autowired",
+            "configuration",
         ],
         logs_to_file_by_default=True,
     ),
@@ -360,14 +434,22 @@ FRAMEWORK_REGISTRY: list[FrameworkDefinition] = [
         default_log_locations=["log"],
         default_log_format="plaintext",
         default_parser="generic",
-        error_patterns=_GENERIC_ERROR_PATTERNS + [
+        error_patterns=_GENERIC_ERROR_PATTERNS
+        + [
             r"ActionController::\w+Error",
             r"ActiveRecord::\w+Error",
         ],
         warning_patterns=_GENERIC_WARNING_PATTERNS,
         keywords=[
-            "rails", "ruby", "activerecord", "migration", "rake",
-            "controller", "model", "view", "gem",
+            "rails",
+            "ruby",
+            "activerecord",
+            "migration",
+            "rake",
+            "controller",
+            "model",
+            "view",
+            "gem",
         ],
         logs_to_file_by_default=True,
     ),
@@ -382,14 +464,22 @@ FRAMEWORK_REGISTRY: list[FrameworkDefinition] = [
         default_log_locations=[],
         default_log_format="plaintext",
         default_parser="generic",
-        error_patterns=_GENERIC_ERROR_PATTERNS + [
+        error_patterns=_GENERIC_ERROR_PATTERNS
+        + [
             r"FlutterError",
             r"════════",
         ],
         warning_patterns=_GENERIC_WARNING_PATTERNS,
         keywords=[
-            "flutter", "dart", "widget", "stateful", "stateless",
-            "build", "pubspec", "material", "cupertino",
+            "flutter",
+            "dart",
+            "widget",
+            "stateful",
+            "stateless",
+            "build",
+            "pubspec",
+            "material",
+            "cupertino",
         ],
         logs_to_file_by_default=False,
         build_tool="flutter",
@@ -470,9 +560,7 @@ def _extract_pyproject_deps(text: str) -> set[str]:
         return deps
 
     # [tool.poetry.dependencies]
-    poetry_deps = (
-        data.get("tool", {}).get("poetry", {}).get("dependencies", {})
-    )
+    poetry_deps = data.get("tool", {}).get("poetry", {}).get("dependencies", {})
     if isinstance(poetry_deps, dict):
         deps.update(poetry_deps.keys())
 
@@ -603,9 +691,16 @@ def _score_framework(
     # Manifest must be present for this framework to match.
     if fw.manifest_file and fw.manifest_file not in found_manifests:
         # Special case: build.gradle.kts counts for build.gradle manifests.
-        if fw.manifest_file == "pom.xml" and "build.gradle" not in found_manifests and "build.gradle.kts" not in found_manifests:
+        if (
+            fw.manifest_file == "pom.xml"
+            and "build.gradle" not in found_manifests
+            and "build.gradle.kts" not in found_manifests
+        ):
             return 0, ""
-        if fw.manifest_file not in ("pom.xml",) and fw.manifest_file not in found_manifests:
+        if (
+            fw.manifest_file not in ("pom.xml",)
+            and fw.manifest_file not in found_manifests
+        ):
             return 0, ""
 
     # Detection files — each present file adds points.
@@ -667,7 +762,11 @@ def _detect_sync(project_path_str: str) -> dict[str, Any]:
     # Also check for Tauri config in a src-tauri subdirectory.
     for tauri_config in ("tauri.conf.json", "tauri.conf.json5"):
         for sub in ("", "src-tauri"):
-            check = project_path / sub / tauri_config if sub else project_path / tauri_config
+            check = (
+                project_path / sub / tauri_config
+                if sub
+                else project_path / tauri_config
+            )
             if check.is_file():
                 # Record as a detection file hit; use manifest key for text.
                 found_manifests.setdefault(f"_tauri_config:{tauri_config}", "")
@@ -706,21 +805,15 @@ def _detect_sync(project_path_str: str) -> dict[str, Any]:
 
     if "Cargo.toml" in found_manifests:
         text = found_manifests["Cargo.toml"]
-        manifest_deps["Cargo.toml"] = (
-            _extract_cargo_deps(text) if text else set()
-        )
+        manifest_deps["Cargo.toml"] = _extract_cargo_deps(text) if text else set()
 
     if "Gemfile" in found_manifests:
         text = found_manifests["Gemfile"]
-        manifest_deps["Gemfile"] = (
-            _extract_gemfile_deps(text) if text else set()
-        )
+        manifest_deps["Gemfile"] = _extract_gemfile_deps(text) if text else set()
 
     if "pubspec.yaml" in found_manifests:
         text = found_manifests["pubspec.yaml"]
-        manifest_deps["pubspec.yaml"] = (
-            _extract_pubspec_deps(text) if text else set()
-        )
+        manifest_deps["pubspec.yaml"] = _extract_pubspec_deps(text) if text else set()
 
     # go.mod — no dep parsing needed; detection_files match is sufficient.
     if "go.mod" in found_manifests:
@@ -760,7 +853,9 @@ def _detect_sync(project_path_str: str) -> dict[str, Any]:
     # Fallback: derive language/category from the first manifest found.
     first_manifest = next(iter(found_manifests))
     # Strip any internal prefix (e.g. "_tauri_config:...").
-    clean_manifest = first_manifest.split(":")[-1] if ":" in first_manifest else first_manifest
+    clean_manifest = (
+        first_manifest.split(":")[-1] if ":" in first_manifest else first_manifest
+    )
     return {
         "framework": "unknown",
         "key": "unknown",

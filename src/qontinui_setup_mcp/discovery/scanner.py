@@ -11,23 +11,25 @@ from typing import TypedDict
 logger = logging.getLogger(__name__)
 
 # Directories to skip during traversal.
-SKIP_DIRS: frozenset[str] = frozenset({
-    "node_modules",
-    ".git",
-    "__pycache__",
-    ".venv",
-    "venv",
-    ".env",
-    "target",
-    "dist",
-    "build",
-    ".next",
-    ".cache",
-    ".tox",
-    ".mypy_cache",
-    ".pytest_cache",
-    ".ruff_cache",
-})
+SKIP_DIRS: frozenset[str] = frozenset(
+    {
+        "node_modules",
+        ".git",
+        "__pycache__",
+        ".venv",
+        "venv",
+        ".env",
+        "target",
+        "dist",
+        "build",
+        ".next",
+        ".cache",
+        ".tox",
+        ".mypy_cache",
+        ".pytest_cache",
+        ".ruff_cache",
+    }
+)
 
 # Mapping of manifest filename → project type.
 MANIFEST_MAP: dict[str, str] = {
@@ -81,9 +83,7 @@ def _scan_sync(root: str, max_depth: int) -> list[ProjectInfo]:
             continue
 
         # Prune skipped directories (in-place so os.walk respects it).
-        dirnames[:] = sorted(
-            d for d in dirnames if d not in SKIP_DIRS
-        )
+        dirnames[:] = sorted(d for d in dirnames if d not in SKIP_DIRS)
 
         # Check for manifest files in this directory.
         filenames_set = set(filenames)

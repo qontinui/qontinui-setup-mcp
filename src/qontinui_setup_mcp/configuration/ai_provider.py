@@ -98,7 +98,10 @@ async def set_ai_provider(
 
     put_resp = await client.put_ai_settings(settings)
     if not put_resp.success:
-        return {"success": False, "error": put_resp.error or "Failed to save AI settings"}
+        return {
+            "success": False,
+            "error": put_resp.error or "Failed to save AI settings",
+        }
 
     return {"success": True}
 

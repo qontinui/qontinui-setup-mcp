@@ -24,11 +24,16 @@ async def get_log_sources(client: RunnerClient) -> dict[str, Any]:
     """
     resp = await client.get_log_source_settings()
     if not resp.success:
-        return {"success": False, "error": resp.error or "Failed to fetch log source settings"}
+        return {
+            "success": False,
+            "error": resp.error or "Failed to fetch log source settings",
+        }
     return {"success": True, **resp.data}
 
 
-async def add_log_source(client: RunnerClient, source: dict[str, Any]) -> dict[str, Any]:
+async def add_log_source(
+    client: RunnerClient, source: dict[str, Any]
+) -> dict[str, Any]:
     """Add a new log source via read-modify-write.
 
     If the *source* dict does not contain an ``"id"`` key, a UUID4 is
@@ -46,7 +51,10 @@ async def add_log_source(client: RunnerClient, source: dict[str, Any]) -> dict[s
     # Read current settings.
     resp = await client.get_log_source_settings()
     if not resp.success:
-        return {"success": False, "error": resp.error or "Failed to read current settings"}
+        return {
+            "success": False,
+            "error": resp.error or "Failed to read current settings",
+        }
 
     settings: dict[str, Any] = resp.data
 
@@ -79,7 +87,10 @@ async def update_log_source(
     """
     resp = await client.get_log_source_settings()
     if not resp.success:
-        return {"success": False, "error": resp.error or "Failed to read current settings"}
+        return {
+            "success": False,
+            "error": resp.error or "Failed to read current settings",
+        }
 
     settings: dict[str, Any] = resp.data
     sources: list[dict[str, Any]] = settings.get("sources", [])
@@ -118,7 +129,10 @@ async def remove_log_source(client: RunnerClient, source_id: str) -> dict[str, A
     """
     resp = await client.get_log_source_settings()
     if not resp.success:
-        return {"success": False, "error": resp.error or "Failed to read current settings"}
+        return {
+            "success": False,
+            "error": resp.error or "Failed to read current settings",
+        }
 
     settings: dict[str, Any] = resp.data
     sources: list[dict[str, Any]] = settings.get("sources", [])
@@ -191,7 +205,10 @@ async def apply_suggested_sources(
     # Read current settings once, add all sources, write once.
     resp = await client.get_log_source_settings()
     if not resp.success:
-        return {"success": False, "error": resp.error or "Failed to read current settings"}
+        return {
+            "success": False,
+            "error": resp.error or "Failed to read current settings",
+        }
 
     settings: dict[str, Any] = resp.data
     sources: list[dict[str, Any]] = settings.get("sources", [])

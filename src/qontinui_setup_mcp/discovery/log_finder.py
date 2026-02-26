@@ -22,58 +22,68 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 #: Directories to skip during traversal.
-SKIP_DIRS: frozenset[str] = frozenset({
-    "node_modules",
-    ".git",
-    "__pycache__",
-    ".venv",
-    "venv",
-    "target",
-    "dist",
-    "build",
-    ".next",
-    ".cache",
-})
+SKIP_DIRS: frozenset[str] = frozenset(
+    {
+        "node_modules",
+        ".git",
+        "__pycache__",
+        ".venv",
+        "venv",
+        "target",
+        "dist",
+        "build",
+        ".next",
+        ".cache",
+    }
+)
 
 #: Glob-style patterns for log files (matched case-insensitively).
-LOG_FILE_PATTERNS: frozenset[str] = frozenset({
-    "*.log",
-    "*.log.*",
-    "*.jsonl",
-    "*.err.log",
-})
+LOG_FILE_PATTERNS: frozenset[str] = frozenset(
+    {
+        "*.log",
+        "*.log.*",
+        "*.jsonl",
+        "*.err.log",
+    }
+)
 
 #: Well-known log directory names.
-LOG_DIR_NAMES: frozenset[str] = frozenset({
-    "logs",
-    "log",
-    ".logs",
-    ".dev-logs",
-})
+LOG_DIR_NAMES: frozenset[str] = frozenset(
+    {
+        "logs",
+        "log",
+        ".logs",
+        ".dev-logs",
+    }
+)
 
 #: Common specific log filenames to look for explicitly.
-COMMON_LOG_FILES: frozenset[str] = frozenset({
-    "debug.log",
-    "error.log",
-    "app.log",
-    "access.log",
-    "npm-debug.log",
-    "yarn-error.log",
-    "lerna-debug.log",
-})
+COMMON_LOG_FILES: frozenset[str] = frozenset(
+    {
+        "debug.log",
+        "error.log",
+        "app.log",
+        "access.log",
+        "npm-debug.log",
+        "yarn-error.log",
+        "lerna-debug.log",
+    }
+)
 
 #: Valid runner log-source categories.
-VALID_CATEGORIES: frozenset[str] = frozenset({
-    "frontend",
-    "backend",
-    "api",
-    "mobile",
-    "database",
-    "build",
-    "testing",
-    "runner",
-    "general",
-})
+VALID_CATEGORIES: frozenset[str] = frozenset(
+    {
+        "frontend",
+        "backend",
+        "api",
+        "mobile",
+        "database",
+        "build",
+        "testing",
+        "runner",
+        "general",
+    }
+)
 
 #: Default category when the framework's category cannot be mapped.
 DEFAULT_CATEGORY: str = "general"
@@ -218,14 +228,16 @@ def _scan_log_files_sync(root: str) -> list[dict[str, Any]]:
             abs_str = str(current)
             if abs_str not in seen_paths:
                 seen_paths.add(abs_str)
-                results.append({
-                    "path": abs_str,
-                    "name": current.name,
-                    "type": "directory",
-                    "size_bytes": 0,
-                    "modified": _modified_iso(current),
-                    "format_guess": "plaintext",
-                })
+                results.append(
+                    {
+                        "path": abs_str,
+                        "name": current.name,
+                        "type": "directory",
+                        "size_bytes": 0,
+                        "modified": _modified_iso(current),
+                        "format_guess": "plaintext",
+                    }
+                )
 
         # Check files in the current directory.
         for filename in filenames:
@@ -234,14 +246,16 @@ def _scan_log_files_sync(root: str) -> list[dict[str, Any]]:
                 abs_str = str(file_path)
                 if abs_str not in seen_paths:
                     seen_paths.add(abs_str)
-                    results.append({
-                        "path": abs_str,
-                        "name": filename,
-                        "type": "file",
-                        "size_bytes": _file_size(file_path),
-                        "modified": _modified_iso(file_path),
-                        "format_guess": _format_guess(file_path),
-                    })
+                    results.append(
+                        {
+                            "path": abs_str,
+                            "name": filename,
+                            "type": "file",
+                            "size_bytes": _file_size(file_path),
+                            "modified": _modified_iso(file_path),
+                            "format_guess": _format_guess(file_path),
+                        }
+                    )
 
     return results
 

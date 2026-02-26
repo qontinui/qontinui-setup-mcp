@@ -6,7 +6,9 @@ them to write to files for the qontinui-runner to read.
 
 from __future__ import annotations
 
-LOGGING_ADVICE: dict[str, dict] = {
+from typing import Any
+
+LOGGING_ADVICE: dict[str, dict[str, Any]] = {
     "nextjs": {
         "framework": "Next.js",
         "logs_to_file_by_default": False,
@@ -452,9 +454,7 @@ LOGGING_ADVICE: dict[str, dict] = {
                 "difficulty": "easy",
                 "description": "Redirect Flutter run output to a file",
                 "instructions": (
-                    "```bash\n"
-                    "flutter run 2>&1 | tee logs/flutter.log\n"
-                    "```"
+                    "```bash\n" "flutter run 2>&1 | tee logs/flutter.log\n" "```"
                 ),
             },
         ],
@@ -462,7 +462,7 @@ LOGGING_ADVICE: dict[str, dict] = {
 }
 
 
-async def get_logging_advice(framework: str) -> dict:
+async def get_logging_advice(framework: str) -> dict[str, Any]:
     """Get framework-specific logging advice.
 
     Args:

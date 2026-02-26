@@ -7,9 +7,9 @@ import json
 import logging
 from typing import Any
 
-from mcp.server import Server
-from mcp.server.stdio import stdio_server
-from mcp.types import (
+from mcp.server import Server  # type: ignore[import-not-found]
+from mcp.server.stdio import stdio_server  # type: ignore[import-not-found]
+from mcp.types import (  # type: ignore[import-not-found]
     GetPromptResult,
     Prompt,
     PromptArgument,
@@ -19,11 +19,13 @@ from mcp.types import (
 )
 
 from qontinui_setup_mcp.client import RunnerClient
-
-# ── Imports: discovery ──────────────────────────────────────────────────
-from qontinui_setup_mcp.discovery.scanner import scan_workspace
-from qontinui_setup_mcp.discovery.frameworks import detect_framework
-from qontinui_setup_mcp.discovery.log_finder import find_log_files, suggest_log_sources
+from qontinui_setup_mcp.configuration.ai_provider import (
+    check_api_key,
+    get_ai_settings,
+    set_ai_provider,
+    store_api_key,
+    test_ai_connection,
+)
 
 # ── Imports: configuration ──────────────────────────────────────────────
 from qontinui_setup_mcp.configuration.log_sources import (
@@ -33,28 +35,26 @@ from qontinui_setup_mcp.configuration.log_sources import (
     remove_log_source,
     update_log_source,
 )
-from qontinui_setup_mcp.configuration.ai_provider import (
-    check_api_key,
-    get_ai_settings,
-    set_ai_provider,
-    store_api_key,
-    test_ai_connection,
-)
 from qontinui_setup_mcp.configuration.profiles import (
     create_log_profile,
     set_default_profile,
 )
+from qontinui_setup_mcp.discovery.frameworks import detect_framework
+from qontinui_setup_mcp.discovery.log_finder import find_log_files, suggest_log_sources
 
-# ── Imports: validation ─────────────────────────────────────────────────
-from qontinui_setup_mcp.validation.prerequisites import check_prerequisites
-from qontinui_setup_mcp.validation.log_validator import validate_log_sources
+# ── Imports: discovery ──────────────────────────────────────────────────
+from qontinui_setup_mcp.discovery.scanner import scan_workspace
+
+# ── Imports: guidance ───────────────────────────────────────────────────
+from qontinui_setup_mcp.guidance.logging_advice import get_logging_advice
 from qontinui_setup_mcp.validation.connection import (
     check_runner_connection,
     get_setup_status,
 )
+from qontinui_setup_mcp.validation.log_validator import validate_log_sources
 
-# ── Imports: guidance ───────────────────────────────────────────────────
-from qontinui_setup_mcp.guidance.logging_advice import get_logging_advice
+# ── Imports: validation ─────────────────────────────────────────────────
+from qontinui_setup_mcp.validation.prerequisites import check_prerequisites
 
 logger = logging.getLogger(__name__)
 
@@ -183,11 +183,27 @@ TOOLS: list[Tool] = [
         inputSchema={
             "type": "object",
             "properties": {
-                "name": {"type": "string", "description": "Display name for the log source"},
-                "path": {"type": "string", "description": "Absolute path to the log file or directory"},
+                "name": {
+                    "type": "string",
+                    "description": "Display name for the log source",
+                },
+                "path": {
+                    "type": "string",
+                    "description": "Absolute path to the log file or directory",
+                },
                 "category": {
                     "type": "string",
-                    "enum": ["frontend", "backend", "api", "mobile", "database", "build", "testing", "runner", "general"],
+                    "enum": [
+                        "frontend",
+                        "backend",
+                        "api",
+                        "mobile",
+                        "database",
+                        "build",
+                        "testing",
+                        "runner",
+                        "general",
+                    ],
                     "description": "Log source category",
                 },
                 "format": {
@@ -240,7 +256,10 @@ TOOLS: list[Tool] = [
         inputSchema={
             "type": "object",
             "properties": {
-                "source_id": {"type": "string", "description": "ID of the log source to update"},
+                "source_id": {
+                    "type": "string",
+                    "description": "ID of the log source to update",
+                },
                 "name": {"type": "string"},
                 "path": {"type": "string"},
                 "category": {"type": "string"},
@@ -260,7 +279,10 @@ TOOLS: list[Tool] = [
         inputSchema={
             "type": "object",
             "properties": {
-                "source_id": {"type": "string", "description": "ID of the log source to remove"},
+                "source_id": {
+                    "type": "string",
+                    "description": "ID of the log source to remove",
+                },
             },
             "required": ["source_id"],
         },
@@ -275,7 +297,10 @@ TOOLS: list[Tool] = [
         inputSchema={
             "type": "object",
             "properties": {
-                "project_path": {"type": "string", "description": "Path to the project root"},
+                "project_path": {
+                    "type": "string",
+                    "description": "Path to the project root",
+                },
                 "dry_run": {
                     "type": "boolean",
                     "description": "If true, return what would be added without making changes (default: false)",
@@ -302,7 +327,10 @@ TOOLS: list[Tool] = [
                     "items": {"type": "string"},
                     "description": "IDs of log sources to include in this profile",
                 },
-                "description": {"type": "string", "description": "Optional profile description"},
+                "description": {
+                    "type": "string",
+                    "description": "Optional profile description",
+                },
             },
             "required": ["name", "source_ids"],
         },
@@ -372,7 +400,10 @@ TOOLS: list[Tool] = [
         inputSchema={
             "type": "object",
             "properties": {
-                "provider": {"type": "string", "description": "Provider name (e.g. 'claude_api', 'gemini_api')"},
+                "provider": {
+                    "type": "string",
+                    "description": "Provider name (e.g. 'claude_api', 'gemini_api')",
+                },
                 "api_key": {"type": "string", "description": "The API key to store"},
             },
             "required": ["provider", "api_key"],
@@ -425,8 +456,14 @@ TOOLS: list[Tool] = [
         inputSchema={
             "type": "object",
             "properties": {
-                "host": {"type": "string", "description": "Runner host (default: auto-detect)"},
-                "port": {"type": "integer", "description": "Runner port (default: 9876)"},
+                "host": {
+                    "type": "string",
+                    "description": "Runner host (default: auto-detect)",
+                },
+                "port": {
+                    "type": "integer",
+                    "description": "Runner port (default: 9876)",
+                },
             },
         },
     ),
@@ -535,12 +572,12 @@ PROMPTS: list[Prompt] = [
 # ═══════════════════════════════════════════════════════════════════════
 
 
-@server.list_tools()
+@server.list_tools()  # type: ignore[untyped-decorator]
 async def list_tools() -> list[Tool]:
     return TOOLS
 
 
-@server.call_tool()
+@server.call_tool()  # type: ignore[untyped-decorator]
 async def call_tool(name: str, arguments: dict[str, Any]) -> list[TextContent]:
     """Dispatch tool calls to their implementations."""
     try:
@@ -576,9 +613,7 @@ async def _dispatch_tool(name: str, args: dict[str, Any]) -> Any:
         return await get_log_sources(c)
 
     if name == "add_log_source":
-        source: dict[str, Any] = {
-            k: v for k, v in args.items() if v is not None
-        }
+        source: dict[str, Any] = {k: v for k, v in args.items() if v is not None}
         return await add_log_source(c, source)
 
     if name == "update_log_source":
@@ -621,7 +656,9 @@ async def _dispatch_tool(name: str, args: dict[str, Any]) -> Any:
         )
 
     if name == "store_api_key":
-        return await store_api_key(c, provider=args["provider"], api_key=args["api_key"])
+        return await store_api_key(
+            c, provider=args["provider"], api_key=args["api_key"]
+        )
 
     if name == "check_api_key":
         return await check_api_key(c, provider=args["provider"])
@@ -634,10 +671,14 @@ async def _dispatch_tool(name: str, args: dict[str, Any]) -> Any:
         return await check_prerequisites(checks=args.get("checks"))
 
     if name == "check_runner_connection":
-        rc = RunnerClient(
-            host=args["host"],
-            port=args["port"],
-        ) if ("host" in args or "port" in args) else c
+        rc = (
+            RunnerClient(
+                host=args["host"],
+                port=args["port"],
+            )
+            if ("host" in args or "port" in args)
+            else c
+        )
         return await check_runner_connection(rc)
 
     if name == "validate_log_sources":
@@ -660,12 +701,12 @@ async def _dispatch_tool(name: str, args: dict[str, Any]) -> Any:
 # ═══════════════════════════════════════════════════════════════════════
 
 
-@server.list_prompts()
+@server.list_prompts()  # type: ignore[untyped-decorator]
 async def list_prompts() -> list[Prompt]:
     return PROMPTS
 
 
-@server.get_prompt()
+@server.get_prompt()  # type: ignore[untyped-decorator]
 async def get_prompt(name: str, arguments: dict[str, str] | None) -> GetPromptResult:
     """Build prompt content for each prompt template."""
     args = arguments or {}

@@ -42,7 +42,10 @@ async def create_log_profile(
     # Read current settings.
     resp = await client.get_log_source_settings()
     if not resp.success:
-        return {"success": False, "error": resp.error or "Failed to read current settings"}
+        return {
+            "success": False,
+            "error": resp.error or "Failed to read current settings",
+        }
 
     settings: dict[str, Any] = resp.data
 
@@ -86,5 +89,8 @@ async def set_default_profile(
     """
     resp = await client.set_default_profile(profile_id)
     if not resp.success:
-        return {"success": False, "error": resp.error or "Failed to set default profile"}
+        return {
+            "success": False,
+            "error": resp.error or "Failed to set default profile",
+        }
     return {"success": True}
