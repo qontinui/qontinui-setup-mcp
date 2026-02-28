@@ -7,9 +7,9 @@ import json
 import logging
 from typing import Any
 
-from mcp.server import Server  # type: ignore[import-not-found]
-from mcp.server.stdio import stdio_server  # type: ignore[import-not-found]
-from mcp.types import (  # type: ignore[import-not-found]
+from mcp.server import Server
+from mcp.server.stdio import stdio_server
+from mcp.types import (
     GetPromptResult,
     Prompt,
     PromptArgument,
