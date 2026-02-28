@@ -61,9 +61,13 @@ class ProjectInfo(TypedDict):
 def _scan_sync(root: str, max_depth: int) -> list[ProjectInfo]:
     """Walk the directory tree synchronously and collect projects.
 
-    Each directory is checked for manifest files. Once a manifest is found the
-    directory is recorded as a project and we move on (one result per
-    directory, first manifest wins).
+    A directory is considered a project only if it contains a ``.git``
+    directory (i.e., it is a git repository root).  This prevents
+    subdirectories with manifest files (like ``backend/`` inside a monorepo)
+    from appearing as separate projects.
+
+    The scan root itself is never reported — it is treated as a workspace
+    container, not a project.
     """
     root_path = Path(root).resolve()
     if not root_path.is_dir():
@@ -77,12 +81,20 @@ def _scan_sync(root: str, max_depth: int) -> list[ProjectInfo]:
         current = Path(dirpath)
         depth = len(current.parts) - root_depth
 
+        # Check for .git BEFORE pruning it from dirnames.
+        has_git = ".git" in dirnames
+
         # Prune skipped directories (in-place so os.walk respects it).
         dirnames[:] = sorted(d for d in dirnames if d not in SKIP_DIRS)
 
         # Stop descending beyond max_depth (but still check this directory).
         if depth >= max_depth:
             dirnames.clear()
+
+        # Only directories with .git are real project roots.
+        # Skip the scan root (depth 0) — it's a workspace container.
+        if not has_git or depth == 0:
+            continue
 
         # Check for manifest files in this directory.
         filenames_set = set(filenames)
@@ -123,7 +135,8 @@ async def scan_workspace(path: str, max_depth: int = 3) -> list[ProjectInfo]:
     """Scan a directory tree for software projects.
 
     Walks the filesystem up to *max_depth* levels below *path*, looking for
-    well-known manifest files that indicate a project root.
+    directories that are git repositories (contain a ``.git`` directory) with
+    well-known manifest files.
 
     Args:
         path: Root directory to scan.

@@ -197,6 +197,15 @@ def _map_framework_category(framework_category: str | None) -> str:
 # ---------------------------------------------------------------------------
 
 
+def _is_under_source_dir(path: Path, root: Path) -> bool:
+    """Return ``True`` if *path* is inside a ``src/`` directory relative to *root*."""
+    try:
+        rel = path.relative_to(root)
+    except ValueError:
+        return False
+    return any(part.lower() == "src" for part in rel.parts)
+
+
 def _scan_log_files_sync(root: str) -> list[dict[str, Any]]:
     """Walk the directory tree synchronously and collect log files/dirs.
 
@@ -210,6 +219,8 @@ def _scan_log_files_sync(root: str) -> list[dict[str, Any]]:
     root_depth = len(root_path.parts)
     results: list[dict[str, Any]] = []
     seen_paths: set[str] = set()
+    # Track discovered log directories so we can skip individual files inside them.
+    log_dir_paths: set[str] = set()
 
     for dirpath, dirnames, filenames in os.walk(root_path, topdown=True):
         current = Path(dirpath)
@@ -225,9 +236,19 @@ def _scan_log_files_sync(root: str) -> list[dict[str, Any]]:
 
         # Check if this directory itself is a log directory.
         if current.name.lower() in LOG_DIR_NAMES and current != root_path:
+            # Skip .dev-logs in per-project scans — handled at workspace level.
+            if current.name.lower() == ".dev-logs":
+                dirnames.clear()
+                continue
+
+            # Skip log dirs under src/ (e.g., src/components/logs is source code).
+            if _is_under_source_dir(current, root_path):
+                continue
+
             abs_str = str(current)
             if abs_str not in seen_paths:
                 seen_paths.add(abs_str)
+                log_dir_paths.add(abs_str)
                 results.append(
                     {
                         "path": abs_str,
@@ -238,6 +259,10 @@ def _scan_log_files_sync(root: str) -> list[dict[str, Any]]:
                         "format_guess": "plaintext",
                     }
                 )
+
+        # Skip individual files if their parent directory is already a log source.
+        if str(current) in log_dir_paths:
+            continue
 
         # Check files in the current directory.
         for filename in filenames:
@@ -448,3 +473,131 @@ async def suggest_log_sources(project_path: str) -> dict[str, Any]:
         "suggested_sources": suggested_sources,
         "needs_logging_setup": needs_logging_setup,
     }
+
+
+# ---------------------------------------------------------------------------
+# suggest_workspace_sources — workspace-level log discovery
+# ---------------------------------------------------------------------------
+
+#: Patterns for categorising dev-log files by filename.
+_DEV_LOG_CLASSIFICATION: list[tuple[str, str, str, str]] = [
+    # (filename_contains, category, parser, display_name)
+    ("backend.log", "backend", "python", "Backend"),
+    ("backend.err.log", "backend", "python", "Backend Errors"),
+    ("frontend.log", "frontend", "javascript", "Frontend"),
+    ("frontend.err.log", "frontend", "javascript", "Frontend Errors"),
+    ("runner-tauri.log", "runner", "rust", "Runner"),
+    ("runner-actions.jsonl", "runner", "generic", "Runner Actions"),
+    ("runner-general.jsonl", "runner", "generic", "Runner General"),
+    ("runner-image-recognition.jsonl", "runner", "generic", "Image Recognition"),
+    ("runner-playwright.jsonl", "testing", "generic", "Playwright"),
+    ("ai-output.jsonl", "runner", "generic", "AI Output"),
+    ("supervisor.log", "runner", "generic", "Supervisor"),
+    ("supervisor.err.log", "runner", "generic", "Supervisor Errors"),
+]
+
+#: Log files to skip (temp copies, rotated, empty, huge debug dumps).
+_DEV_LOG_SKIP_PATTERNS: frozenset[str] = frozenset(
+    {
+        "-copy",
+        "-copy2",
+        "-temp",
+        "-temp2",
+        "python-ws-debug",
+        "backend-velocity",
+        "logcat.log",
+        "metro.log",
+        "runner-build.log",
+        "browser-events",
+    }
+)
+
+#: Color assignments for important source categories.
+_CATEGORY_COLORS: dict[str, str] = {
+    "backend": "#22c55e",
+    "frontend": "#3b82f6",
+    "runner": "#f97316",
+    "testing": "#a855f7",
+}
+
+
+def _classify_dev_log(filename: str) -> tuple[str, str, str, str] | None:
+    """Return ``(display_name, category, parser, format)`` for a dev-log file.
+
+    Returns ``None`` if the file should be skipped.
+    """
+    lower = filename.lower()
+
+    # Skip temp/debug/copy files.
+    for skip in _DEV_LOG_SKIP_PATTERNS:
+        if skip in lower:
+            return None
+
+    # Match against known patterns.
+    for pattern_file, category, parser, display_name in _DEV_LOG_CLASSIFICATION:
+        if lower == pattern_file:
+            fmt = "jsonl" if lower.endswith(".jsonl") else "plaintext"
+            return (display_name, category, parser, fmt)
+
+    return None
+
+
+def _scan_workspace_sources_sync(workspace_path: str) -> dict[str, Any]:
+    """Scan a workspace root for dev-log files and return classified sources."""
+    root = Path(workspace_path).resolve()
+    if not root.is_dir():
+        return {"sources": [], "dev_logs_dir": None}
+
+    # Look for .dev-logs directory.
+    dev_logs_dir = root / ".dev-logs"
+    if not dev_logs_dir.is_dir():
+        return {"sources": [], "dev_logs_dir": None}
+
+    sources: list[dict[str, Any]] = []
+
+    for entry in sorted(dev_logs_dir.iterdir()):
+        if not entry.is_file():
+            continue
+        if entry.stat().st_size == 0:
+            continue
+
+        classification = _classify_dev_log(entry.name)
+        if classification is None:
+            continue
+
+        display_name, category, parser, fmt = classification
+
+        source = _build_source_dict(
+            name=display_name,
+            description=f"Dev log from .dev-logs/{entry.name}",
+            category=category,
+            source_type="file",
+            path=str(entry),
+            format_guess=fmt,
+            parser=parser,
+        )
+        source["color"] = _CATEGORY_COLORS.get(category)
+        sources.append(source)
+
+    return {
+        "sources": sources,
+        "dev_logs_dir": str(dev_logs_dir),
+    }
+
+
+async def suggest_workspace_sources(workspace_path: str) -> dict[str, Any]:
+    """Discover dev-log sources at the workspace root level.
+
+    Scans for a ``.dev-logs`` directory in *workspace_path* and classifies
+    individual log files into categorised source configs (backend, frontend,
+    runner, etc.).
+
+    Args:
+        workspace_path: Root directory of the workspace (parent of projects).
+
+    Returns:
+        A dict with keys ``sources`` (list of ``GlobalLogSource``-compatible
+        dicts) and ``dev_logs_dir`` (path to the ``.dev-logs`` directory, or
+        ``None`` if not found).
+    """
+    return await asyncio.to_thread(_scan_workspace_sources_sync, workspace_path)
