@@ -572,7 +572,7 @@ PROMPTS: list[Prompt] = [
 # ═══════════════════════════════════════════════════════════════════════
 
 
-@server.list_tools()  # type: ignore[untyped-decorator]
+@server.list_tools()  # type: ignore[untyped-decorator, no-untyped-call]
 async def list_tools() -> list[Tool]:
     return TOOLS
 
@@ -701,12 +701,12 @@ async def _dispatch_tool(name: str, args: dict[str, Any]) -> Any:
 # ═══════════════════════════════════════════════════════════════════════
 
 
-@server.list_prompts()  # type: ignore[untyped-decorator]
+@server.list_prompts()  # type: ignore[untyped-decorator, no-untyped-call]
 async def list_prompts() -> list[Prompt]:
     return PROMPTS
 
 
-@server.get_prompt()  # type: ignore[untyped-decorator]
+@server.get_prompt()  # type: ignore[untyped-decorator, no-untyped-call]
 async def get_prompt(name: str, arguments: dict[str, str] | None) -> GetPromptResult:
     """Build prompt content for each prompt template."""
     args = arguments or {}
