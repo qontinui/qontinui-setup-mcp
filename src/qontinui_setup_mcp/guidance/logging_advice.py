@@ -434,9 +434,7 @@ LOGGING_ADVICE: dict[str, dict[str, Any]] = {
                 "difficulty": "easy",
                 "description": "Redirect Metro bundler output to a file",
                 "instructions": (
-                    "```bash\n"
-                    "npx react-native start 2>&1 | tee logs/metro.log\n"
-                    "```"
+                    "```bash\nnpx react-native start 2>&1 | tee logs/metro.log\n```"
                 ),
             },
         ],
@@ -454,7 +452,7 @@ LOGGING_ADVICE: dict[str, dict[str, Any]] = {
                 "difficulty": "easy",
                 "description": "Redirect Flutter run output to a file",
                 "instructions": (
-                    "```bash\n" "flutter run 2>&1 | tee logs/flutter.log\n" "```"
+                    "```bash\nflutter run 2>&1 | tee logs/flutter.log\n```"
                 ),
             },
         ],

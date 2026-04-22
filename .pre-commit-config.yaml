@@ -14,17 +14,12 @@ repos:
       - id: mixed-line-ending
         args: ['--fix=lf']
 
-  - repo: https://github.com/psf/black
-    rev: 24.10.0
-    hooks:
-      - id: black
-        language_version: python3.13
-
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.6.9
     hooks:
       - id: ruff
         args: ["--fix"]
+      - id: ruff-format
 
   # Note: mypy disabled in pre-commit — run manually with `poetry run mypy --strict src/`
   # The mcp library has no type stubs, causing issues in isolated pre-commit envs.
