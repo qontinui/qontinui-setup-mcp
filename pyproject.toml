@@ -3,7 +3,7 @@ name = "qontinui-setup-mcp"
 version = "0.1.0"
 description = "MCP server for guided qontinui-runner setup and configuration"
 authors = ["Joshua Spinak"]
-license = "MIT"
+license = "AGPL-3.0-or-later"
 packages = [{include = "qontinui_setup_mcp", from = "src"}]
 
 [tool.poetry.scripts]
